@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breaking The Limits - Hành trình vượt qua giới hạn bản thân cùng AI</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #CFE6D1 0%, #E4A972 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .hero-content {
+            max-width: 800px;
+            z-index: 1;
+            animation: fadeInUp 1s ease-out;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: #fff;
+            opacity: 0.95;
+        }
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .about-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #CFE6D1, #E4A972);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+        .quick-actions {
+            background: linear-gradient(135deg, #4A7C59, #CFE6D1);
+            padding: 4rem 5%;
+        }
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .action-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .action-card:hover {
+            transform: translateY(-8px);
+            background: #fff;
+        }
+        .footer {
+            background: #2C3E35;
+            color: #fff;
+            padding: 3rem 5%;
+            text-align: center;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .footer-links a {
+            color: #CFE6D1;
+            text-decoration: none;
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .about-content { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo">💚 Breaking The Limits</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Trang chủ</a></li>
+            <li><a href="#about">Giới thiệu</a></li>
+            <li><a href="#features">Tính năng</a></li>
+            <li><a href="journal.html">Nhật ký</a></li>
+            <li><a href="family.html">Gia đình</a></li>
+            <li><a href="auth.html">Đăng Ký</a></li>
+        </ul>
+        <button class="mobile-menu-btn">☰</button>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Breaking The Limits</h1>
+            <p>Hành trình vượt qua giới hạn bản thân cùng AI</p>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem;">Khám phá bản thân, kết nối cảm xúc, và nuôi dưỡng tâm hồn mỗi ngày</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="#features" class="btn btn-primary">Khám phá ngay</a>
+                <a href="journal.html" class="btn btn-secondary">Bắt đầu hành trình</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="about">
+        <div class="about-content scroll-reveal">
+            <div class="about-image">📖</div>
+            <div class="about-text">
+                <h2 style="color: #4A7C59; font-size: 2rem; margin-bottom: 1rem;">Về Breaking The Limits</h2>
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #555;">Breaking The Limits là cuốn nhật ký cảm xúc thông minh, nơi AI lắng nghe và thấu hiểu bạn – giúp học sinh THPT vượt qua áp lực, phát triển trí tuệ cảm xúc, và gắn kết gia đình.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="features" style="background: #fff;">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 1rem; color: #4A7C59;">Các tính năng chính</h2>
+        <p style="text-align: center; font-size: 1.2rem; color: #666; margin-bottom: 3rem;">Khám phá những công cụ giúp bạn phát triển sức khỏe tinh thần</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon" style="background: #E8F5E9;">📝</div>
+                <h3>Ghi nhật ký & theo dõi cảm xúc</h3>
+                <p>Ghi lại cảm xúc mỗi ngày, theo dõi hành trình phát triển bản thân.</p>
+                <a href="journal.html" class="btn btn-primary">Trải nghiệm ngay</a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: #E3F2FD;">🤖</div>
+                <h3>AI phân tích & đưa lời khuyên</h3>
+                <p>Trí tuệ nhân tạo phân tích cảm xúc và đưa ra gợi ý.</p>
+                <a href="journal.html" class="btn btn-primary">Trải nghiệm ngay</a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: #FFF3E0;">👨‍👩‍👧</div>
+                <h3>Chế độ Gia đình</h3>
+                <p>Phụ huynh theo dõi sức khỏe tinh thần của con một cách tế nhị.</p>
+                <a href="family.html" class="btn btn-primary">Trải nghiệm ngay</a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: #FCE4EC;">💖</div>
+                <h3>Hoạt động chữa lành</h3>
+                <p>Khám phá các hoạt động sáng tạo và game thư giãn.</p>
+                <a href="activities.html" class="btn btn-primary">Trải nghiệm ngay</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="quick-actions">
+        <h2 style="text-align: center; color: #fff; font-size: 2.5rem; margin-bottom: 3rem;">Hoạt động nhanh</h2>
+        <div class="actions-grid">
+            <a href="activities.html#game" class="action-card">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🎮</div>
+                <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Game</h3>
+                <p style="color: #666;">Vẽ và thể hiện cảm xúc qua màu sắc</p>
+            </a>
+            <a href="activities.html#message" class="action-card">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">💌</div>
+                <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Thông điệp hôm nay</h3>
+                <p style="color: #666;">Nhận động lực tích cực mỗi ngày</p>
+            </a>
+            <a href="activities.html#healing" class="action-card">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">💖</div>
+                <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Chữa lành</h3>
+                <p style="color: #666;">Lắng nghe truyện và podcast thư giãn</p>
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#about">Giới thiệu</a>
+            <a href="journal.html">Nhật ký</a>
+            <a href="family.html">Gia đình</a>
+            <a href="activities.html">Hoạt động</a>
+        </div>
+        <p>© 2025 Breaking The Limits – Made with 💚 for students</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

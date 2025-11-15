@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Breaking The Limits</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #CFE6D1 0%, #E4A972 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .auth-container {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+            max-width: 450px;
+            width: 100%;
+            padding: 3rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-logo h1 {
+            color: #4A7C59;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-logo p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: #f0f0f0;
+            border-radius: 50px;
+            padding: 0.3rem;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 50px;
+            background: transparent;
+            color: #666;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            background: #4A7C59;
+            color: #fff;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4A7C59;
+            box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+        }
+
+        .role-selector-inline {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .role-option {
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .role-option input[type="radio"] {
+            display: none;
+        }
+
+        .role-option:hover {
+            border-color: #4A7C59;
+            background: #f8f8f8;
+        }
+
+        .role-option input[type="radio"]:checked + .role-content {
+            color: #4A7C59;
+        }
+
+        .role-option input[type="radio"]:checked ~ .role-option {
+            border-color: #4A7C59;
+            background: #CFE6D1;
+        }
+
+        .role-option.selected {
+            border-color: #4A7C59;
+            background: #CFE6D1;
+        }
+
+        .role-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #4A7C59, #CFE6D1);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(74, 124, 89, 0.3);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .forgot-password a {
+            color: #4A7C59;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            background: #fff;
+            padding: 0 1rem;
+            position: relative;
+            color: #999;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-social {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .btn-social:hover {
+            border-color: #4A7C59;
+            background: #f8f8f8;
+        }
+
+        .error-message {
+            background: #F8D7DA;
+            color: #721C24;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .success-message {
+            background: #D4EDDA;
+            color: #155724;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .auth-logo h1 {
+                font-size: 1.5rem;
+            }
+
+            .role-selector-inline {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Logo -->
+        <div class="auth-logo">
+            <h1>💚 Breaking The Limits</h1>
+            <p>Hành trình vượt qua giới hạn bản thân</p>
+        </div>
+
+        <!-- Error/Success Messages -->
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <!-- Tabs -->
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchTab('login')">Đăng nhập</button>
+            <button class="auth-tab" onclick="switchTab('register')">Đăng ký</button>
+        </div>
+
+        <!-- Login Form -->
+        <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="loginEmail" placeholder="email@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mật khẩu</label>
+                <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" required>
+            </div>
+
+            <div class="remember-me">
+                <input type="checkbox" id="rememberMe">
+                <label for="rememberMe">Ghi nhớ đăng nhập</label>
+            </div>
+
+            <button type="submit" class="btn-submit">Đăng nhập</button>
+
+            <div class="forgot-password">
+                <a href="#" onclick="alert('Tính năng đang phát triển')">Quên mật khẩu?</a>
+            </div>
+
+            <div class="divider">
+                <span>Hoặc đăng nhập với</span>
+            </div>
+
+            <div class="social-login">
+                <button type="button" class="btn-social" onclick="alert('Google login đang phát triển')">
+                    <span>🔍</span>
+                    Google
+                </button>
+                <button type="button" class="btn-social" onclick="alert('Facebook login đang phát triển')">
+                    <span>📘</span>
+                    Facebook
+                </button>
+            </div>
+        </form>
+
+        <!-- Register Form -->
+        <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label class="form-label">Họ và tên</label>
+                <input type="text" class="form-input" id="registerName" placeholder="Nguyễn Văn A" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="registerEmail" placeholder="email@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mật khẩu</label>
+                <input type="password" class="form-input" id="registerPassword" placeholder="••••••••" minlength="8" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Xác nhận mật khẩu</label>
+                <input type="password" class="form-input" id="registerConfirmPassword" placeholder="••••••••" minlength="8" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Bạn là:</label>
+                <div class="role-selector-inline">
+                    <div class="role-option" onclick="selectRole('student', this)">
+                        <div class="role-icon">🎓</div>
+                        <div class="role-label">Học sinh</div>
+                        <input type="radio" name="role" value="student" required>
+                    </div>
+                    <div class="role-option" onclick="selectRole('parent', this)">
+                        <div class="role-icon">👨‍👩‍👧</div>
+                        <div class="role-label">Phụ huynh</div>
+                        <input type="radio" name="role" value="parent" required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Đăng ký</button>
+
+            <div class="forgot-password">
+                <p style="color: #666; font-size: 0.9rem; margin-top: 1rem;">
+                    Bằng việc đăng ký, bạn đồng ý với 
+                    <a href="#" style="color: #4A7C59;">Điều khoản sử dụng</a> của chúng tôi
+                </p>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        let selectedRole = null;
+
+        // Switch between login and register tabs
+        function switchTab(tab) {
+            // Update tabs
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update forms
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.getElementById('registerForm').classList.add('active');
+            }
+
+            // Clear messages
+            hideMessages();
+        }
+
+        // Select role for registration
+        function selectRole(role, element) {
+            selectedRole = role;
+            document.querySelectorAll('.role-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            element.querySelector('input[type="radio"]').checked = true;
+        }
+
+        // Handle Login
+        async function handleLogin(e) {
+            e.preventDefault();
+            hideMessages();
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showError('Vui lòng điền đầy đủ thông tin');
+                return;
+            }
+
+            BTL.showLoading('Đang đăng nhập...');
+
+            try {
+                // Call API
+                const response = await AppAPI.auth.login(email, password);
+                
+                BTL.hideLoading();
+
+                if (response.user) {
+                    showSuccess('Đăng nhập thành công!');
+                    
+                    // Redirect based on role
+                    setTimeout(() => {
+                        const role = response.user.role;
+                        if (role === 'admin') {
+                            window.location.href = 'admin.html';
+                        } else if (role === 'parent') {
+                            window.location.href = 'family.html?role=parent';
+                        } else {
+                            window.location.href = 'journal.html';
+                        }
+                    }, 1000);
+                }
+            } catch (error) {
+                BTL.hideLoading();
+                showError('Email hoặc mật khẩu không đúng');
+            }
+        }
+
+        // Handle Register
+        async function handleRegister(e) {
+            e.preventDefault();
+            hideMessages();
+
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+            // Validation
+            if (!name || !email || !password || !confirmPassword) {
+                showError('Vui lòng điền đầy đủ thông tin');
+                return;
+            }
+
+            if (!BTL.validateEmail(email)) {
+                showError('Email không hợp lệ');
+                return;
+            }
+
+            if (password.length < 8) {
+                showError('Mật khẩu phải có ít nhất 8 ký tự');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('Mật khẩu xác nhận không khớp');
+                return;
+            }
+
+            if (!selectedRole) {
+                showError('Vui lòng chọn vai trò của bạn');
+                return;
+            }
+
+            BTL.showLoading('Đang tạo tài khoản...');
+
+            try {
+                // Call API
+                const response = await AppAPI.auth.register({
+                    name: name,
+                    email: email,
+                    password: password,
+                    role: selectedRole
+                });
+
+                BTL.hideLoading();
+                showSuccess('Đăng ký thành công! Đang chuyển hướng...');
+
+                // Auto login after register
+                setTimeout(async () => {
+                    const loginResponse = await AppAPI.auth.login(email, password);
+                    const role = loginResponse.user.role;
+                    
+                    if (role === 'parent') {
+                        window.location.href = 'family.html?role=parent';
+                    } else {
+                        window.location.href = 'journal.html';
+                    }
+                }, 1500);
+
+            } catch (error) {
+                BTL.hideLoading();
+                showError('Email đã tồn tại hoặc có lỗi xảy ra');
+            }
+        }
+
+        // Show/Hide Messages
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 5000);
+        }
+
+        function showSuccess(message) {
+            const successEl = document.getElementById('successMessage');
+            successEl.textContent = message;
+            successEl.classList.add('show');
+        }
+
+        function hideMessages() {
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            if (BTL.isLoggedIn()) {
+                const user = BTL.getCurrentUser();
+                if (user) {
+                    if (user.role === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else if (user.role === 'parent') {
+                        window.location.href = 'family.html?role=parent';
+                    } else {
+                        window.location.href = 'journal.html';
+                    }
+                }
+            }
+        });
+
+        // Demo accounts info
+        console.log('Demo Accounts:');
+        console.log('Student: student@example.com / password123');
+        console.log('Parent: parent@example.com / password123');
+        console.log('Admin: admin@example.com / password123');
+    </script>
+</body>
+</html>

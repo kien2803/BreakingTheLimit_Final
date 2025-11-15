@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoạt Động - Breaking The Limits</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #F6F4EF 0%, #E4A972 100%);
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+        .page-header {
+            text-align: center;
+            margin: 2rem 0 3rem;
+        }
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: #4A7C59;
+        }
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.5);
+            color: #666;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: #fff;
+            color: #4A7C59;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        /* Game Section */
+        .game-section {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .daily-prompt {
+            background: linear-gradient(135deg, #CFE6D1, #E4A972);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .canvas-container {
+            display: grid;
+            grid-template-columns: 1fr 250px;
+            gap: 2rem;
+        }
+        .canvas-wrapper {
+            background: #f8f8f8;
+            border-radius: 15px;
+            padding: 1rem;
+        }
+        #drawCanvas {
+            width: 100%;
+            height: 500px;
+            border-radius: 10px;
+            background: #fff;
+            cursor: crosshair;
+            touch-action: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .tools-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .tool-group {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .tool-group h4 {
+            color: #4A7C59;
+            margin-bottom: 1rem;
+        }
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+        .color-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .color-btn.active {
+            border-color: #4A7C59;
+            transform: scale(1.1);
+        }
+        .size-btn {
+            padding: 0.7rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .size-btn.active {
+            background: #CFE6D1;
+            border-color: #4A7C59;
+        }
+        .tool-btn {
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            background: #f0f0f0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+        }
+        .tool-btn:hover {
+            background: #e0e0e0;
+        }
+        .tool-btn.save {
+            background: linear-gradient(135deg, #4A7C59, #CFE6D1);
+            color: #fff;
+        }
+        .gallery {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #f0f0f0;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        .gallery-item {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* Healing Section */
+        .healing-section {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .healing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .healing-card {
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .healing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .healing-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #CFE6D1, #E4A972);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+        .healing-content {
+            padding: 1.5rem;
+        }
+        .healing-content h3 {
+            color: #4A7C59;
+            margin-bottom: 0.5rem;
+        }
+        .healing-btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #4A7C59, #CFE6D1);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        /* Message Section */
+        .message-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .message-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            animation: fadeInScale 0.8s;
+        }
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .message-icon {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+        }
+        .message-text {
+            font-size: 1.8rem;
+            color: #4A7C59;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+        .message-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .message-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .message-btn:hover {
+            transform: translateY(-3px);
+        }
+        /* Modal */
+        .story-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+        .story-modal.show {
+            display: flex;
+        }
+        .story-content {
+            background: #fff;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .story-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .story-text {
+            line-height: 1.8;
+            color: #555;
+        }
+        @media (max-width: 768px) {
+            .canvas-container {
+                grid-template-columns: 1fr;
+            }
+            .tools-panel {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .tool-group {
+                flex: 1;
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo">💚 Breaking The Limits</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Trang chủ</a></li>
+            <li><a href="journal.html">Nhật ký</a></li>
+            <li><a href="activities.html">Hoạt động</a></li>
+            <li><a href="family.html">Gia đình</a></li>
+        </ul>
+        <button class="mobile-menu-btn">☰</button>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>🎨 Hoạt Động Thư Giãn</h1>
+            <p>Khám phá, sáng tạo và chữa lành tâm hồn</p>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('game')">🎮 Game Vẽ</button>
+            <button class="tab-btn" onclick="switchTab('healing')">💖 Chữa Lành</button>
+            <button class="tab-btn" onclick="switchTab('message')">💌 Thông Điệp</button>
+        </div>
+
+        <!-- GAME TAB -->
+        <div class="tab-content active" id="game">
+            <div class="game-section">
+                <div class="daily-prompt" id="dailyPrompt">
+                    "Hôm nay bạn cảm thấy như bầu trời nào?"
+                </div>
+
+                <div class="canvas-container">
+                    <div class="canvas-wrapper">
+                        <canvas id="drawCanvas"></canvas>
+                    </div>
+
+                    <div class="tools-panel">
+                        <div class="tool-group">
+                            <h4>🎨 Màu sắc</h4>
+                            <div class="color-grid">
+                                <button class="color-btn active" style="background: #4A7C59;" data-color="#4A7C59"></button>
+                                <button class="color-btn" style="background: #E4A972;" data-color="#E4A972"></button>
+                                <button class="color-btn" style="background: #C97676;" data-color="#C97676"></button>
+                                <button class="color-btn" style="background: #6B8EC9;" data-color="#6B8EC9"></button>
+                                <button class="color-btn" style="background: #F6D186;" data-color="#F6D186"></button>
+                                <button class="color-btn" style="background: #000000;" data-color="#000000"></button>
+                                <button class="color-btn" style="background: #FFFFFF; border: 2px solid #ddd;" data-color="#FFFFFF"></button>
+                                <button class="color-btn" style="background: #CFE6D1;" data-color="#CFE6D1"></button>
+                                <button class="color-btn" style="background: #F6F4EF;" data-color="#F6F4EF"></button>
+                            </div>
+                        </div>
+
+                        <div class="tool-group">
+                            <h4>✏️ Kích thước</h4>
+                            <button class="size-btn" data-size="2">Nhỏ</button>
+                            <button class="size-btn active" data-size="5">Vừa</button>
+                            <button class="size-btn" data-size="10">Lớn</button>
+                        </div>
+
+                        <div class="tool-group">
+                            <h4>🛠️ Công cụ</h4>
+                            <button class="tool-btn" onclick="undoDrawing()">↶ Hoàn tác</button>
+                            <button class="tool-btn" onclick="clearCanvas()">🗑️ Xóa hết</button>
+                            <button class="tool-btn save" onclick="saveDrawing()">💾 Lưu bản vẽ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery">
+                    <h3 style="color: #4A7C59; margin-bottom: 1rem;">🖼️ Thư viện của bạn</h3>
+                    <div class="gallery-grid" id="gallery"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HEALING TAB -->
+        <div class="tab-content" id="healing">
+            <div class="healing-section">
+                <div class="healing-grid">
+                    <div class="healing-card" onclick="showStory('leaf')">
+                        <div class="healing-image">🍃</div>
+                        <div class="healing-content">
+                            <h3>Chiếc Lá Rụng Cuối Cùng</h3>
+                            <p style="color: #666; margin-bottom: 1rem;">Một câu chuyện cảm động về hy vọng và sức mạnh của niềm tin từ O. Henry.</p>
+                            <button class="healing-btn">🎧 Lắng nghe</button>
+                        </div>
+                    </div>
+
+                    <div class="healing-card" onclick="showStory('glass')">
+                        <div class="healing-image">🥛</div>
+                        <div class="healing-content">
+                            <h3>Đứa Trẻ và Chiếc Cốc</h3>
+                            <p style="color: #666; margin-bottom: 1rem;">Bài học về cách nhìn nhận cuộc sống - nửa đầy hay nửa rỗng?</p>
+                            <button class="healing-btn">🎧 Lắng nghe</button>
+                        </div>
+                    </div>
+
+                    <div class="healing-card" onclick="showStory('seed')">
+                        <div class="healing-image">🌱</div>
+                        <div class="healing-content">
+                            <h3>Hạt Giống Của Niềm Tin</h3>
+                            <p style="color: #666; margin-bottom: 1rem;">Câu chuyện về sự kiên nhẫn và niềm tin vào bản thân.</p>
+                            <button class="healing-btn">🎧 Lắng nghe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MESSAGE TAB -->
+        <div class="tab-content" id="message">
+            <div class="message-section">
+                <div class="message-card">
+                    <div class="message-icon">💚</div>
+                    <div class="message-text" id="messageText">Đang tải...</div>
+                    <div style="color: #999; font-style: italic; margin-bottom: 2rem;">- Breaking The Limits</div>
+                    <div class="message-actions">
+                        <button class="message-btn" style="background: #4A7C59; color: #fff;" onclick="saveMessage()">💾 Lưu lại</button>
+                        <button class="message-btn" style="background: #E4A972; color: #fff;" onclick="loadNewMessage()">🔄 Thông điệp mới</button>
+                        <button class="message-btn" style="background: #CFE6D1; color: #4A7C59;" onclick="shareMessage()">📤 Chia sẻ</button>
+                    </div>
+                </div>
+
+                <div style="background: #fff; border-radius: 20px; padding: 2rem; margin-top: 2rem; box-shadow: 0 8px 30px rgba(0,0,0,0.1);">
+                    <h3 style="color: #4A7C59; margin-bottom: 1rem;">💌 Thông điệp đã lưu</h3>
+                    <div id="savedMessages"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story Modal -->
+    <div class="story-modal" id="storyModal">
+        <div class="story-content">
+            <div class="story-header">
+                <h2 style="color: #4A7C59;" id="storyTitle"></h2>
+                <button style="background: none; border: none; font-size: 2rem; cursor: pointer; color: #999;" onclick="closeStory()">×</button>
+            </div>
+            <div class="story-text" id="storyText"></div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            if (tabName === 'message') {
+                loadNewMessage();
+            }
+        }
+
+        // ===== DRAWING CANVAS =====
+        const canvas = document.getElementById('drawCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = canvas.offsetWidth;
+        canvas.height = 500;
+
+        let isDrawing = false;
+        let currentColor = '#4A7C59';
+        let currentSize = 5;
+        let drawingHistory = [];
+
+        // Color selection
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentColor = btn.dataset.color;
+            });
+        });
+
+        // Size selection
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentSize = parseInt(btn.dataset.size);
+            });
+        });
+
+        // Drawing functions
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentSize;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            if (isDrawing) {
+                drawingHistory.push(canvas.toDataURL());
+            }
+            isDrawing = false;
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        function clearCanvas() {
+            if (confirm('Bạn có chắc muốn xóa hết?')) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        function undoDrawing() {
+            if (drawingHistory.length > 0) {
+                const img = new Image();
+                img.src = drawingHistory[drawingHistory.length - 1];
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                };
+                drawingHistory.pop();
+            }
+        }
+
+        function saveDrawing() {
+            const dataURL = canvas.toDataURL('image/png');
+            
+            // Save to gallery
+            const gallery = document.getElementById('gallery');
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+            const img = document.createElement('img');
+            img.src = dataURL;
+            item.appendChild(img);
+            gallery.insertBefore(item, gallery.firstChild);
+            
+            // Save to localStorage
+            const saved = BTL.getFromLocalStorage('drawings') || [];
+            saved.unshift(dataURL);
+            BTL.saveToLocalStorage('drawings', saved.slice(0, 20)); // Keep last 20
+            
+            BTL.createConfetti();
+            BTL.showAlert('🎉 Đã lưu bản vẽ vào thư viện!', 'success');
+        }
+
+        // Load saved drawings
+        function loadGallery() {
+            const saved = BTL.getFromLocalStorage('drawings') || [];
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = saved.map(dataURL => `
+                <div class="gallery-item">
+                    <img src="${dataURL}" alt="Drawing">
+                </div>
+            `).join('');
+        }
+
+        // ===== HEALING STORIES =====
+        const stories = {
+            leaf: {
+                title: 'Chiếc Lá Rụng Cuối Cùng',
+                content: `<p>Trong một khu phố nghèo của thành phố New York, hai cô gái trẻ - Sue và Johnsy - cùng chia sẻ một căn hộ nhỏ. Johnsy bị bệnh viêm phổi nặng và cô tin rằng khi chiếc lá cuối cùng trên cây thường xuân bên ngoài cửa sổ rơi xuống, cô cũng sẽ ra đi.</p>
+                
+                <p>Sue lo lắng và kể cho người họa sĩ già Behrman ở tầng dưới. Behrman là một người nghèo khó, luôn mơ ước vẽ được một kiệt tác nhưng chưa bao giờ thực hiện được.</p>
+                
+                <p>Đêm đó, cơn bão lớn ập đến. Sáng hôm sau, Johnsy kinh ngạc khi thấy chiếc lá vẫn còn đó, bám chặt vào cành cây. Ngày qua ngày, chiếc lá vẫn không rơi, và niềm hy vọng trong Johnsy dần trở lại.</p>
+                
+                <p>Sau đó Sue mới biết sự thật: chiếc lá đó không phải là lá thật. Đêm bão, Behrman đã trèo lên và vẽ chiếc lá đó lên tường để cứu Johnsy. Ông đã ướt mưa và qua đời vì viêm phổi, nhưng đã hoàn thành kiệt tác cuối đời - chiếc lá mang lại hy vọng.</p>
+                
+                <p><strong>Bài học:</strong> Đôi khi, niềm hy vọng nhỏ nhất cũng có thể cứu sống một con người. Và tình yêu thương, lòng tốt luôn tồn tại xung quanh chúng ta.</p>`
+            },
+            glass: {
+                title: 'Đứa Trẻ và Chiếc Cốc Thủy Tinh',
+                content: `<p>Có một đứa trẻ luôn bi quan về cuộc sống. Mỗi khi gặp khó khăn, em lại than vãn và nản lòng.</p>
+                
+                <p>Một ngày, người cha rót nửa cốc nước và hỏi: "Con thấy cái cốc này thế nào?"</p>
+                
+                <p>"Nó chỉ còn nửa rỗng thôi ạ," đứa trẻ trả lời buồn bã.</p>
+                
+                <p>Người cha mỉm cười: "Hay là con thử nhìn theo cách khác? Cốc này đang có nửa đầy nước đấy."</p>
+                
+                <p>Đứa trẻ nhìn lại chiếc cốc, bỗng nhận ra: cùng một chiếc cốc, cùng một lượng nước, nhưng cách nhìn khác nhau mang lại cảm giác hoàn toàn khác biệt.</p>
+                
+                <p><strong>Bài học:</strong> Cuộc sống không phải lúc nào cũng như ý, nhưng cách bạn nhìn nhận nó sẽ quyết định bạn cảm thấy hạnh phúc hay đau khổ. Hãy chọn nhìn vào những gì bạn có, thay vì tiếc nuối những gì bạn thiếu.</p>`
+            },
+            seed: {
+                title: 'Hạt Giống Của Niềm Tin',
+                content: `<p>Một người nông dân gieo một hạt giống vào đất. Ngày qua ngày, ông chăm sóc, tưới nước đều đặn nhưng không thấy gì mọc lên.</p>
+                
+                <p>Hàng xóm cười nhạo: "Ông đang lãng phí thời gian đấy. Hạt giống đó chắc đã chết rồi!"</p>
+                
+                <p>Nhưng người nông dân vẫn kiên nhẫn. Ông nói: "Ta tin rằng hạt giống đang nảy mầm trong lòng đất. Những gì tốt đẹp cần thời gian để phát triển."</p>
+                
+                <p>Rồi một ngày, chồi non xanh mượt nhú lên. Vài tháng sau, cây đã cao lớn, ra hoa và kết trái. Hàng xóm kinh ngạc trước sự kiên trì của người nông dân.</p>
+                
+                <p><strong>Bài học:</strong> Đừng bỏ cuộc khi không thấy kết quả ngay lập tức. Sự thay đổi tốt đẹp cần thời gian. Hãy tin tưởng vào bản thân và kiên trì, vì những điều tuyệt vời nhất thường đến từ sự kiên nhẫn.</p>`
+            }
+        };
+
+        function showStory(storyId) {
+            const story = stories[storyId];
+            document.getElementById('storyTitle').textContent = story.title;
+            document.getElementById('storyText').innerHTML = story.content;
+            document.getElementById('storyModal').classList.add('show');
+        }
+
+        function closeStory() {
+            document.getElementById('storyModal').classList.remove('show');
+        }
+
+        // ===== DAILY MESSAGE =====
+        let currentMessage = null;
+
+        async function loadNewMessage() {
+            try {
+                const data = await AppAPI.activities.getDailyMessage();
+                currentMessage = data;
+                document.getElementById('messageText').textContent = data.message;
+            } catch (error) {
+                BTL.showAlert('Không thể tải thông điệp', 'error');
+            }
+        }
+
+        function saveMessage() {
+            if (!currentMessage) return;
+            
+            const saved = BTL.getFromLocalStorage('savedMessages') || [];
+            saved.unshift({
+                ...currentMessage,
+                savedAt: new Date().toISOString()
+            });
+            BTL.saveToLocalStorage('savedMessages', saved.slice(0, 20));
+            
+            loadSavedMessages();
+            BTL.showAlert('Đã lưu thông điệp!', 'success');
+        }
+
+        function shareMessage() {
+            if (!currentMessage) return;
+            BTL.copyToClipboard(currentMessage.message);
+        }
+
+        function loadSavedMessages() {
+            const saved = BTL.getFromLocalStorage('savedMessages') || [];
+            const container = document.getElementById('savedMessages');
+            
+            if (saved.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center;">Chưa có thông điệp nào được lưu</p>';
+                return;
+            }
+            
+            container.innerHTML = saved.map(msg => `
+                <div style="padding: 1rem; background: #F6F4EF; border-radius: 10px; margin-bottom: 0.8rem; border-left: 4px solid #4A7C59;">
+                    <p style="color: #333; margin-bottom: 0.5rem;">${msg.message}</p>
+                    <small style="color: #999;">Lưu lúc: ${BTL.formatDate(msg.savedAt, 'relative')}</small>
+                </div>
+            `).join('');
+        }
+
+        // Close modal on outside click
+        document.getElementById('storyModal').addEventListener('click', (e) => {
+            if (e.target.id === 'storyModal') {
+                closeStory();
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGallery();
+            loadSavedMessages();
+            
+            // Random daily prompt
+            const prompts = [
+                "Hôm nay bạn cảm thấy như bầu trời nào?",
+                "Nếu nỗi buồn có hình dạng, nó sẽ là gì?",
+                "Vẽ điều khiến bạn hạnh phúc nhất hôm nay",
+                "Màu sắc nào đại diện cho tâm trạng của bạn?",
+                "Hãy vẽ giấc mơ của bạn"
+            ];
+            document.getElementById('dailyPrompt').textContent = prompts[Math.floor(Math.random() * prompts.length)];
+        });
+    </script>
+</body>
+</html>

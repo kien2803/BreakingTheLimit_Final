@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chế Độ Gia Đình - Breaking The Limits</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/family.css">
+
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">💚 Breaking The Limits</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Trang chủ</a></li>
+            <li><a href="journal.html">Nhật ký</a></li>
+            <li><a href="activities.html">Hoạt động</a></li>
+            <li><a href="family.html">Gia đình</a></li>
+            <li><a href="#" onclick="BTL.logout()">Đăng xuất</a></li>
+        </ul>
+        <button class="mobile-menu-btn">☰</button>
+    </nav>
+
+    <div class="container" style="margin-top: 100px;">
+        <!-- Role Selector -->
+        <div class="role-selector" id="roleSelector">
+            <h1>Chọn vai trò của bạn</h1>
+            <div class="role-cards">
+                <div class="role-card" onclick="selectRole('parent')">
+                    <div class="role-icon">👨‍👩‍👧</div>
+                    <h2>Phụ huynh</h2>
+                    <p>Theo dõi sức khỏe tinh thần của con</p>
+                </div>
+                <div class="role-card" onclick="selectRole('student')">
+                    <div class="role-icon">🎓</div>
+                    <h2>Học sinh</h2>
+                    <p>Cài đặt quyền riêng tư và kết nối</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PARENT VIEW -->
+        <div class="parent-view hidden" id="parentView">
+            <div class="page-header">
+                <h1>👨‍👩‍👧 Bảng Điều Khiển Phụ Huynh</h1>
+                <p>Theo dõi và hỗ trợ con bạn một cách tế nhị</p>
+            </div>
+
+            <!-- Children List -->
+            <div class="children-section">
+                <div class="section-header">
+                    <h2>Con của bạn</h2>
+                    <button class="btn btn-primary" onclick="BTL.openModal('linkChildModal')">
+                        + Kết nối con
+                    </button>
+                </div>
+
+                <div class="children-grid" id="childrenGrid">
+                    <!-- Children cards will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Selected Child Dashboard -->
+            <div class="child-dashboard hidden" id="childDashboard">
+                <div class="dashboard-header">
+                    <button class="btn-back" onclick="backToChildren()">← Quay lại</button>
+                    <div>
+                        <h2 id="childName">Tên con</h2>
+                        <p id="childLastActive">Hoạt động lần cuối: --</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Emotion Overview -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>📊 Tổng quan cảm xúc</h3>
+                            <select id="timeframeSelect" onchange="updateDashboard()">
+                                <option value="week">7 ngày qua</option>
+                                <option value="month">30 ngày qua</option>
+                                <option value="quarter">3 tháng qua</option>
+                            </select>
+                        </div>
+                        <canvas id="emotionChart"></canvas>
+                    </div>
+
+                    <!-- Wellness Score -->
+                    <div class="card wellness-card">
+                        <h3>💚 Mức độ bình an</h3>
+                        <div class="wellness-score-large">
+                            <div class="score-circle">
+                                <span id="wellnessScoreParent">--</span>
+                            </div>
+                            <p>/100</p>
+                        </div>
+                        <div class="wellness-trend">
+                            <span id="wellnessTrend">--</span>
+                        </div>
+                    </div>
+
+                    <!-- Alerts -->
+                    <div class="card alert-card">
+                        <h3>⚠️ Cảnh báo & Gợi ý</h3>
+                        <div id="alertsList">
+                            <!-- Alerts will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Activity Stats -->
+                    <div class="card">
+                        <h3>📈 Hoạt động</h3>
+                        <div class="activity-stats">
+                            <div class="stat-item">
+                                <div class="stat-number" id="journalCount">--</div>
+                                <div class="stat-label">Số nhật ký</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="streakDays">--</div>
+                                <div class="stat-label">Ngày liên tiếp</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="moodVariation">--</div>
+                                <div class="stat-label">Biến động</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Section -->
+                <div class="action-section">
+                    <h3>💌 Gửi động viên cho con</h3>
+                    <textarea 
+                        id="encouragementText" 
+                        class="form-textarea" 
+                        placeholder="Viết lời động viên cho con bạn..."></textarea>
+                    <button class="btn btn-primary" onclick="sendEncouragement()">
+                        Gửi tin nhắn
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STUDENT VIEW -->
+        <div class="student-view hidden" id="studentView">
+            <div class="page-header">
+                <h1>🎓 Cài Đặt Gia Đình</h1>
+                <p>Quản lý quyền riêng tư và kết nối với gia đình</p>
+            </div>
+
+            <div class="student-grid">
+                <!-- Privacy Settings -->
+                <div class="card">
+                    <h3>🔒 Quyền riêng tư</h3>
+                    <div class="privacy-settings">
+                        <div class="setting-item">
+                            <div>
+                                <strong>Chia sẻ cảm xúc với phụ huynh</strong>
+                                <p>Phụ huynh sẽ thấy tổng quan cảm xúc, không thấy nội dung chi tiết</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="shareEmotions" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div>
+                                <strong>Cảnh báo khi có vấn đề</strong>
+                                <p>Gửi thông báo cho phụ huynh khi phát hiện dấu hiệu lo ngại</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="alertParents" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div>
+                                <strong>Nhận tin nhắn động viên</strong>
+                                <p>Cho phép phụ huynh gửi tin nhắn động viên</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="receiveMessages" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="savePrivacySettings()">
+                            💾 Lưu cài đặt
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Connected Parents -->
+                <div class="card">
+                    <h3>👨‍👩‍👧 Phụ huynh đã kết nối</h3>
+                    <div id="connectedParents">
+                        <!-- Connected parents list will be inserted here -->
+                    </div>
+                    <button class="btn btn-secondary" onclick="BTL.openModal('addParentModal')">
+                        + Thêm phụ huynh
+                    </button>
+                </div>
+
+                <!-- Letter to Parents -->
+                <div class="card">
+                    <h3>💌 Tâm thư gửi cha mẹ</h3>
+                    <p style="color: #666; margin-bottom: 1rem;">
+                        Viết những điều bạn muốn chia sẻ với cha mẹ. Tin nhắn sẽ được kiểm duyệt trước khi gửi.
+                    </p>
+                    <textarea 
+                        id="letterText" 
+                        class="form-textarea" 
+                        placeholder="Cha/Mẹ ơi, con muốn nói..."></textarea>
+                    <button class="btn btn-primary" onclick="sendLetter()">
+                        📤 Gửi tâm thư
+                    </button>
+                </div>
+
+                <!-- Received Messages -->
+                <div class="card">
+                    <h3>💝 Tin nhắn từ cha mẹ</h3>
+                    <div id="receivedMessages">
+                        <!-- Messages will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link Child Modal -->
+    <div class="modal-overlay" id="linkChildModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Kết nối với con</h3>
+                <button class="modal-close" onclick="BTL.closeModal('linkChildModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Email của con</label>
+                    <input type="email" class="form-input" id="childEmail" 
+                           placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mã xác nhận (nếu có)</label>
+                    <input type="text" class="form-input" id="verificationCode" 
+                           placeholder="Nhập mã xác nhận">
+                </div>
+                <button class="btn btn-primary" onclick="linkChild()">
+                    Gửi yêu cầu kết nối
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Parent Modal -->
+    <div class="modal-overlay" id="addParentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Thêm phụ huynh</h3>
+                <button class="modal-close" onclick="BTL.closeModal('addParentModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Email phụ huynh</label>
+                    <input type="email" class="form-input" id="parentEmail" 
+                           placeholder="email@example.com">
+                </div>
+                <button class="btn btn-primary" onclick="addParent()">
+                    Gửi lời mời
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/family.js"></script>
+</body>
+</html>
