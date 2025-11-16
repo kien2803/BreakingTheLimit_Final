@@ -16,6 +16,20 @@ const MockAPI = {
             localStorage.setItem('authToken', token);
             localStorage.setItem('currentUser', JSON.stringify(user));
             return { token, user };
+        },
+        
+        async register(userData) {
+            await MockAPI.delay();
+            const user = {
+                id: Date.now(),
+                name: userData.name,
+                email: userData.email,
+                role: userData.role || 'student'
+            };
+            const token = 'mock_token_' + Date.now();
+            localStorage.setItem('authToken', token);
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            return { token, user };
         }
     },
     

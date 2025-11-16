@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhật Ký - Breaking The Limits</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #F6F4EF 0%, #CFE6D1 100%);
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+        .page-header {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: #4A7C59;
+            margin-bottom: 0.5rem;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        .journal-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+        .journal-textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 1.5rem;
+            border: 2px solid #CFE6D1;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            resize: vertical;
+        }
+        .journal-textarea:focus {
+            outline: none;
+            border-color: #4A7C59;
+            box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+        }
+        .mood-selector {
+            margin: 1.5rem 0;
+        }
+        .mood-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .mood-btn {
+            font-size: 2.5rem;
+            padding: 0.8rem;
+            border: 3px solid transparent;
+            border-radius: 15px;
+            background: #f8f8f8;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .mood-btn:hover {
+            transform: scale(1.1);
+            background: #fff;
+        }
+        .mood-btn.active {
+            border-color: #4A7C59;
+            background: #CFE6D1;
+            transform: scale(1.1);
+        }
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .streak-card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .streak-number {
+            font-size: 3rem;
+            color: #E4A972;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        .analysis-result {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            margin: 2rem auto;
+            max-width: 1200px;
+            display: none;
+        }
+        .analysis-result.show {
+            display: block;
+        }
+        .wellness-score {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #CFE6D1, #E4A972);
+            border-radius: 15px;
+            margin: 2rem 0;
+        }
+        .score-number {
+            font-size: 4rem;
+            color: #fff;
+            font-weight: bold;
+        }
+        .emotion-bar {
+            margin: 1.5rem 0;
+        }
+        .bar-container {
+            background: #f0f0f0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        .bar-fill {
+            height: 100%;
+            transition: width 1s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 1rem;
+            color: #fff;
+            font-weight: 600;
+        }
+        .bar-positive { background: linear-gradient(90deg, #4A7C59, #CFE6D1); }
+        .bar-neutral { background: linear-gradient(90deg, #E4A972, #F6D186); }
+        .bar-negative { background: linear-gradient(90deg, #C97676, #E8A3A3); }
+        .badge-item {
+            font-size: 2rem;
+            padding: 0.5rem;
+            background: linear-gradient(135deg, #E4A972, #F6D186);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .calendar-day {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .calendar-day.has-entry {
+            background: linear-gradient(135deg, #4A7C59, #CFE6D1);
+            color: #fff;
+        }
+        .calendar-day.no-entry {
+            background: #f0f0f0;
+            color: #999;
+        }
+        .calendar-day.today {
+            border: 2px solid #E4A972;
+        }
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo">💚 Breaking The Limits</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Trang chủ</a></li>
+            <li><a href="journal.html">Nhật ký</a></li>
+            <li><a href="activities.html">Hoạt động</a></li>
+            <li><a href="family.html">Gia đình</a></li>
+        </ul>
+        <button class="mobile-menu-btn">☰</button>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📔 Nhật Ký Của Bạn</h1>
+            <p>Hôm nay bạn cảm thấy thế nào? Hãy chia sẻ với chúng tôi...</p>
+        </div>
+
+        <div class="main-grid">
+            <div class="journal-card">
+                <h2 style="color: #4A7C59; margin-bottom: 1.5rem;">✍️ Viết nhật ký hôm nay</h2>
+                <textarea 
+                    class="journal-textarea" 
+                    id="journalText"
+                    placeholder="Hôm nay bạn trải qua những gì? Cảm xúc của bạn ra sao? Hãy viết ra những gì bạn đang nghĩ..."></textarea>
+                
+                <div class="mood-selector">
+                    <label style="font-weight: 600; margin-bottom: 1rem; display: block;">Tâm trạng của bạn:</label>
+                    <div class="mood-options">
+                        <button class="mood-btn" data-mood="very-happy" title="Rất vui">😄</button>
+                        <button class="mood-btn" data-mood="happy" title="Vui">😊</button>
+                        <button class="mood-btn" data-mood="neutral" title="Bình thường">😐</button>
+                        <button class="mood-btn" data-mood="sad" title="Buồn">😞</button>
+                        <button class="mood-btn" data-mood="very-sad" title="Rất buồn">😢</button>
+                        <button class="mood-btn" data-mood="angry" title="Tức giận">😡</button>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="analyzeJournal()" style="width: 100%; margin-top: 1.5rem;">
+                    🤖 Phân tích cảm xúc cùng AI
+                </button>
+            </div>
+
+            <div class="sidebar">
+                <div class="streak-card">
+                    <h3 style="color: #4A7C59;">🔥 Chuỗi ngày</h3>
+                    <div class="streak-number" id="streakDays">5</div>
+                    <p style="color: #666;">Tuyệt vời! 5 ngày liên tiếp</p>
+                </div>
+
+                <div class="streak-card" style="margin-top: 1.5rem;">
+                    <h3 style="color: #4A7C59; margin-bottom: 1rem;">🏆 Huy hiệu</h3>
+                    <div id="badgesContainer" style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
+                        <div class="badge-item" title="5 ngày liên tiếp ghi nhật ký">🌟</div>
+                    </div>
+                    <p style="color: #666; font-size: 0.9rem; margin-top: 1rem;">Tiếp tục để mở khóa thêm!</p>
+                </div>
+
+                <div class="streak-card" style="margin-top: 1.5rem;">
+                    <h3 style="color: #4A7C59; margin-bottom: 1rem;">📅 Lịch ghi nhật ký</h3>
+                    <div id="calendarChart" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.3rem;">
+                        <!-- Calendar will be generated here -->
+                    </div>
+                    <p style="color: #666; font-size: 0.85rem; margin-top: 1rem; text-align: center;">Tuần này</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="analysis-result" id="analysisResult">
+            <h2 style="color: #4A7C59; margin-bottom: 1.5rem;">📊 Kết quả phân tích</h2>
+            
+            <div class="wellness-score">
+                <h3 style="color: #fff;">Mức độ bình an</h3>
+                <div class="score-number" id="wellnessScore">--</div>
+                <p style="color: #fff;">/100</p>
+            </div>
+
+            <div class="emotion-bars">
+                <div class="emotion-bar">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-weight: 600;">
+                        <span>😊 Tích cực</span>
+                        <span id="positivePercent">--</span>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar-fill bar-positive" id="positiveBar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="emotion-bar">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-weight: 600;">
+                        <span>😐 Trung tính</span>
+                        <span id="neutralPercent">--</span>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar-fill bar-neutral" id="neutralBar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="emotion-bar">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-weight: 600;">
+                        <span>😞 Tiêu cực</span>
+                        <span id="negativePercent">--</span>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar-fill bar-negative" id="negativeBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #F6F4EF; padding: 1.5rem; border-radius: 15px; margin-top: 2rem;">
+                <h3 style="color: #4A7C59; margin-bottom: 1rem;">💚 Gợi ý cho bạn</h3>
+                <div id="suggestionsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        let selectedMood = null;
+
+        // Mood selection
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedMood = btn.dataset.mood;
+            });
+        });
+
+        async function analyzeJournal() {
+            const text = document.getElementById('journalText').value.trim();
+            
+            if (!text) {
+                BTL.showAlert('Vui lòng viết nhật ký trước khi phân tích!', 'error');
+                return;
+            }
+            
+            if (!selectedMood) {
+                BTL.showAlert('Vui lòng chọn tâm trạng của bạn!', 'error');
+                return;
+            }
+
+            BTL.showLoading('Đang phân tích cảm xúc...');
+
+            try {
+                const result = await AppAPI.ai.analyzeEmotion(text, selectedMood);
+                
+                // Show results
+                document.getElementById('analysisResult').classList.add('show');
+                document.getElementById('wellnessScore').textContent = result.wellnessScore;
+                document.getElementById('positivePercent').textContent = Math.round(result.emotionScore.positive) + '%';
+                document.getElementById('neutralPercent').textContent = Math.round(result.emotionScore.neutral) + '%';
+                document.getElementById('negativePercent').textContent = Math.round(result.emotionScore.negative) + '%';
+                
+                // Animate bars
+                setTimeout(() => {
+                    document.getElementById('positiveBar').style.width = result.emotionScore.positive + '%';
+                    document.getElementById('neutralBar').style.width = result.emotionScore.neutral + '%';
+                    document.getElementById('negativeBar').style.width = result.emotionScore.negative + '%';
+                }, 100);
+
+                // Render suggestions
+                const suggestionsHTML = result.suggestions.map(s => `
+                    <div style="padding: 1rem; background: #fff; border-radius: 10px; margin-bottom: 0.8rem;">
+                        ${s}
+                    </div>
+                `).join('');
+                document.getElementById('suggestionsList').innerHTML = suggestionsHTML;
+
+                // Scroll to result
+                document.getElementById('analysisResult').scrollIntoView({ behavior: 'smooth' });
+
+                // Save journal entry
+                const journalEntry = {
+                    id: Date.now(),
+                    text: text,
+                    mood: selectedMood,
+                    date: new Date().toISOString(),
+                    analysis: result
+                };
+                
+                const journals = BTL.getFromLocalStorage('journals') || [];
+                journals.unshift(journalEntry);
+                BTL.saveToLocalStorage('journals', journals.slice(0, 100)); // Keep last 100 entries
+                
+                // Update UI
+                updateStreak();
+                updateBadges();
+                updateCalendar();
+
+                BTL.createConfetti();
+                BTL.showAlert('Phân tích hoàn tất!', 'success');
+
+            } catch (error) {
+                BTL.showAlert('Có lỗi xảy ra. Vui lòng thử lại!', 'error');
+            } finally {
+                BTL.hideLoading();
+            }
+        }
+
+        function updateStreak() {
+            const journals = BTL.getFromLocalStorage('journals') || [];
+            if (journals.length === 0) return;
+            
+            // Calculate streak
+            let streak = 1;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            for (let i = 1; i < journals.length; i++) {
+                const entryDate = new Date(journals[i].date);
+                entryDate.setHours(0, 0, 0, 0);
+                const daysDiff = (today - entryDate) / (1000 * 60 * 60 * 24);
+                
+                if (daysDiff === i) {
+                    streak++;
+                } else {
+                    break;
+                }
+            }
+            
+            document.getElementById('streakDays').textContent = streak;
+        }
+
+        function updateBadges() {
+            const journals = BTL.getFromLocalStorage('journals') || [];
+            const badges = [];
+            
+            // Badge for 5 days streak
+            if (journals.length >= 5) {
+                badges.push({ icon: '🌟', title: '5 ngày liên tiếp' });
+            }
+            // Badge for 10 days streak
+            if (journals.length >= 10) {
+                badges.push({ icon: '⭐', title: '10 ngày liên tiếp' });
+            }
+            // Badge for 30 days streak
+            if (journals.length >= 30) {
+                badges.push({ icon: '💎', title: '30 ngày liên tiếp' });
+            }
+            // Badge for 100 entries
+            if (journals.length >= 100) {
+                badges.push({ icon: '🏆', title: '100 nhật ký' });
+            }
+            
+            const container = document.getElementById('badgesContainer');
+            if (badges.length === 0) {
+                container.innerHTML = '<p style="color: #999; font-size: 0.9rem;">Chưa có huy hiệu nào</p>';
+            } else {
+                container.innerHTML = badges.map(b => 
+                    `<div class="badge-item" title="${b.title}">${b.icon}</div>`
+                ).join('');
+            }
+        }
+
+        function updateCalendar() {
+            const journals = BTL.getFromLocalStorage('journals') || [];
+            const today = new Date();
+            const container = document.getElementById('calendarChart');
+            
+            // Get last 7 days
+            const days = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                days.push(date);
+            }
+            
+            // Check which days have entries
+            const hasEntry = days.map(day => {
+                return journals.some(journal => {
+                    const journalDate = new Date(journal.date);
+                    return journalDate.toDateString() === day.toDateString();
+                });
+            });
+            
+            // Generate calendar
+            container.innerHTML = days.map((day, index) => {
+                const isToday = day.toDateString() === today.toDateString();
+                const hasEntryClass = hasEntry[index] ? 'has-entry' : 'no-entry';
+                const todayClass = isToday ? 'today' : '';
+                
+                return `<div class="calendar-day ${hasEntryClass} ${todayClass}" title="${day.toLocaleDateString('vi-VN')}">
+                    ${day.getDate()}
+                </div>`;
+            }).join('');
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStreak();
+            updateBadges();
+            updateCalendar();
+        });
+    </script>
+</body>
+</html>

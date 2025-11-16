@@ -148,6 +148,41 @@ function getFromLocalStorage(key) {
     return item ? JSON.parse(item) : null;
 }
 
+function getCurrentUser() {
+    return getFromLocalStorage('currentUser');
+}
+
+// Copy to Clipboard
+function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert('Đã sao chép vào clipboard!', 'success');
+        }).catch(() => {
+            // Fallback for older browsers
+            fallbackCopyToClipboard(text);
+        });
+    } else {
+        fallbackCopyToClipboard(text);
+    }
+}
+
+function fallbackCopyToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        showAlert('Đã sao chép vào clipboard!', 'success');
+    } catch (err) {
+        showAlert('Không thể sao chép', 'error');
+    }
+    document.body.removeChild(textArea);
+}
+
 // Export to global
 window.BTL = {
     isLoggedIn,
@@ -161,7 +196,9 @@ window.BTL = {
     validateEmail,
     createConfetti,
     saveToLocalStorage,
-    getFromLocalStorage
+    getFromLocalStorage,
+    getCurrentUser,
+    copyToClipboard
 };
 
 // Initialize on load

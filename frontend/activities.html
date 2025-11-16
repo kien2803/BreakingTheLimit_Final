@@ -361,9 +361,9 @@
         </div>
 
         <div class="tab-nav">
-            <button class="tab-btn active" onclick="switchTab('game')">🎮 Game Vẽ</button>
-            <button class="tab-btn" onclick="switchTab('healing')">💖 Chữa Lành</button>
-            <button class="tab-btn" onclick="switchTab('message')">💌 Thông Điệp</button>
+            <button class="tab-btn active" onclick="switchTab('game', event)">🎮 Game Vẽ</button>
+            <button class="tab-btn" onclick="switchTab('healing', event)">💖 Chữa Lành</button>
+            <button class="tab-btn" onclick="switchTab('message', event)">💌 Thông Điệp</button>
         </div>
 
         <!-- GAME TAB -->
@@ -461,6 +461,7 @@
                     <div class="message-actions">
                         <button class="message-btn" style="background: #4A7C59; color: #fff;" onclick="saveMessage()">💾 Lưu lại</button>
                         <button class="message-btn" style="background: #E4A972; color: #fff;" onclick="loadNewMessage()">🔄 Thông điệp mới</button>
+                        <button class="message-btn" style="background: #6B8EC9; color: #fff;" onclick="scheduleMessage()">📅 Gửi lại ngày mai</button>
                         <button class="message-btn" style="background: #CFE6D1; color: #4A7C59;" onclick="shareMessage()">📤 Chia sẻ</button>
                     </div>
                 </div>
@@ -488,11 +489,20 @@
     <script src="js/api.js"></script>
     <script>
         // Tab switching
-        function switchTab(tabName) {
+        function switchTab(tabName, event) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Fallback: find button by tab name
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    if (btn.textContent.includes(tabName === 'game' ? 'Game' : tabName === 'healing' ? 'Chữa' : 'Thông')) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
             document.getElementById(tabName).classList.add('active');
             
             if (tabName === 'message') {
@@ -701,7 +711,34 @@
 
         function shareMessage() {
             if (!currentMessage) return;
-            BTL.copyToClipboard(currentMessage.message);
+            
+            // Try Web Share API first
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Thông điệp từ Breaking The Limits',
+                    text: currentMessage.message,
+                    url: window.location.href
+                }).catch(() => {
+                    // Fallback to clipboard
+                    BTL.copyToClipboard(currentMessage.message);
+                });
+            } else {
+                // Fallback to clipboard
+                BTL.copyToClipboard(currentMessage.message);
+            }
+        }
+
+        function scheduleMessage() {
+            if (!currentMessage) return;
+            
+            const scheduled = BTL.getFromLocalStorage('scheduledMessages') || [];
+            scheduled.push({
+                ...currentMessage,
+                scheduledFor: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // Tomorrow
+            });
+            BTL.saveToLocalStorage('scheduledMessages', scheduled);
+            
+            BTL.showAlert('✅ Đã lên lịch gửi lại thông điệp này vào ngày mai!', 'success');
         }
 
         function loadSavedMessages() {

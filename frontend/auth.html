@@ -134,6 +134,11 @@
             transition: all 0.3s;
         }
 
+        .role-option {
+            display: block;
+            cursor: pointer;
+        }
+
         .role-option input[type="radio"] {
             display: none;
         }
@@ -143,18 +148,17 @@
             background: #f8f8f8;
         }
 
-        .role-option input[type="radio"]:checked + .role-content {
+        .role-option input[type="radio"]:checked + .role-content .role-label {
             color: #4A7C59;
-        }
-
-        .role-option input[type="radio"]:checked ~ .role-option {
-            border-color: #4A7C59;
-            background: #CFE6D1;
         }
 
         .role-option.selected {
             border-color: #4A7C59;
             background: #CFE6D1;
+        }
+
+        .role-option.selected .role-label {
+            color: #4A7C59;
         }
 
         .role-icon {
@@ -323,8 +327,8 @@
 
         <!-- Tabs -->
         <div class="auth-tabs">
-            <button class="auth-tab active" onclick="switchTab('login')">Đăng nhập</button>
-            <button class="auth-tab" onclick="switchTab('register')">Đăng ký</button>
+            <button class="auth-tab active" onclick="switchTab('login', event)">Đăng nhập</button>
+            <button class="auth-tab" onclick="switchTab('register', event)">Đăng ký</button>
         </div>
 
         <!-- Login Form -->
@@ -391,16 +395,20 @@
             <div class="form-group">
                 <label class="form-label">Bạn là:</label>
                 <div class="role-selector-inline">
-                    <div class="role-option" onclick="selectRole('student', this)">
-                        <div class="role-icon">🎓</div>
-                        <div class="role-label">Học sinh</div>
+                    <label class="role-option" onclick="selectRole('student', this)">
                         <input type="radio" name="role" value="student" required>
-                    </div>
-                    <div class="role-option" onclick="selectRole('parent', this)">
-                        <div class="role-icon">👨‍👩‍👧</div>
-                        <div class="role-label">Phụ huynh</div>
+                        <div class="role-content">
+                            <div class="role-icon">🎓</div>
+                            <div class="role-label">Học sinh</div>
+                        </div>
+                    </label>
+                    <label class="role-option" onclick="selectRole('parent', this)">
                         <input type="radio" name="role" value="parent" required>
-                    </div>
+                        <div class="role-content">
+                            <div class="role-icon">👨‍👩‍👧</div>
+                            <div class="role-label">Phụ huynh</div>
+                        </div>
+                    </label>
                 </div>
             </div>
 
@@ -421,10 +429,20 @@
         let selectedRole = null;
 
         // Switch between login and register tabs
-        function switchTab(tab) {
+        function switchTab(tab, event) {
             // Update tabs
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Fallback: find the button by tab name
+                document.querySelectorAll('.auth-tab').forEach(btn => {
+                    if ((tab === 'login' && btn.textContent.includes('Đăng nhập')) ||
+                        (tab === 'register' && btn.textContent.includes('Đăng ký'))) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
 
             // Update forms
             document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
@@ -484,7 +502,8 @@
                 }
             } catch (error) {
                 BTL.hideLoading();
-                showError('Email hoặc mật khẩu không đúng');
+                console.error('Login error:', error);
+                showError(error.message || 'Email hoặc mật khẩu không đúng');
             }
         }
 
@@ -552,7 +571,8 @@
 
             } catch (error) {
                 BTL.hideLoading();
-                showError('Email đã tồn tại hoặc có lỗi xảy ra');
+                console.error('Register error:', error);
+                showError(error.message || 'Email đã tồn tại hoặc có lỗi xảy ra');
             }
         }
 
